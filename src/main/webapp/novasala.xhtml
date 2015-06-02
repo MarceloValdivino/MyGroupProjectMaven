@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>Nova Sala</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:growl id="mensagens"/>
+
+            <ui:include src="/resources/templates/menu-bar.xhtml"/>    
+            <div align="center">
+                <p:panel style="margin: 10px; width: 370px; margin-top: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel value="Cadastro de Sala"/>
+                    </f:facet>
+                    <h:panelGrid columns="2" cellspacing="5">
+                        <p:outputLabel id="titulo" value="Título:"/>
+                        <p:inputText value="#{salaBean.sala.titulo}" style="width: 215px;"/>
+
+                        <p:outputLabel id="descricao" value="Descrição:"/>
+                        <p:inputTextarea value="#{salaBean.sala.descricao}" rows="6" cols="22"/>
+                    </h:panelGrid>
+                    <div align="center">
+                        <p:commandButton styleClass="ui-priority-primary" value="Cadastrar" action="#{salaBean.salvar()}"/>
+                    </div>
+                </p:panel>
+            </div>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Minha Sala</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+
+        <p:growl/>
+        <ui:include src="/resources/templates/menu-bar.xhtml"/>
+
+        <table cellspacing="10">
+            <h:form>
+                <ui:repeat value="#{salaBean.minhasSalas}" var="sala" rendered="#{not empty salaBean.minhasSalas}">
+                    <tr valign="top">
+                        <td width="1000">
+                            <p:panel header="#{sala.titulo}">
+                                <f:facet name="options">
+                                    <p:menu>
+                                        <p:submenu label="Opções">
+                                            <p:menuitem value="Novo Tópico" onclick="PF('novoTopico').show();">
+                                                <f:setPropertyActionListener value="#{sala}" target="#{topicoBean.sala}"/>
+                                            </p:menuitem>
+                                            <p:menuitem value="Visualizar"/>
+                                            <p:menuitem value="Deletar Sala"/>
+                                        </p:submenu>
+                                    </p:menu>
+                                </f:facet>
+                                <b>Descrição: </b>#{sala.descricao}<br></br>
+                                <p:tabView style="width: 900px;" value="#{sala.topicos}" var="topico" rendered="#{not empty sala.topicos}" scrollable="true">
+                                    <p:tab title="#{topico.titulo}">
+
+                                    </p:tab>
+                                </p:tabView>
+                            </p:panel>
+                        </td>
+                        <td style="width: 30%;">
+                            <div align="top">
+                                <p:panel header="Alunos da Sala">
+                                    <f:facet name="options">
+                                        <p:menu>
+                                            <p:submenu label="Opções">
+                                                <p:menuitem value="Convidar Aluno" onclick="PF('convidarAluno').show();">
+                                                    <f:setPropertyActionListener value="#{sala}" target="#{dataTableConvidarBean.sala}"/>
+                                                </p:menuitem>
+                                                <p:menuitem value="Remover Aluno"/>
+                                            </p:submenu>
+                                        </p:menu>
+                                    </f:facet>
+                                </p:panel>
+                            </div>
+                        </td>
+                    </tr>
+                </ui:repeat>
+            </h:form>
+        </table>
+        <p:dialog header="Convidar Aluno" id="convidarAluno" widgetVar="convidarAluno" draggable="false" modal="true" resizable="false">
+            <ui:include src="/resources/templates/data-table-convite.xhtml"/>
+        </p:dialog>
+
+
+        <p:dialog header="Criar Novo Tópico" id="novoTopico" widgetVar="novoTopico" draggable="false" modal="true" resizable="false">
+            <h:form>
+                <p:outputLabel value="Nome do Tópico:"/>
+                <p:inputText value="#{topicoBean.topico.titulo}"/>
+                <p:separator/>
+                <div align="center">
+                    <p:commandButton value="Criar Tópico" styleClass="ui-priority-primary" action="#{topicoBean.salvar()}" onclick="PF('novoTopico').hide();" update="@all" ajax="false"/>
+                </div>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</html>

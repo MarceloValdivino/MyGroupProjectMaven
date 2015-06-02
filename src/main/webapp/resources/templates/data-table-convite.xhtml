@@ -1,0 +1,41 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="dataTableConvite">
+        <p:dataTable id="dataTable" 
+                     style="width: 700px;" 
+                     selection="#{dataTableConvidarBean.alunosSelecionados}" 
+                     selectionMode="multiple"
+                     value="#{dataTableConvidarBean.alunosEncontrados}"
+                     var="aluno"
+                     rowKey="#{aluno.id}"
+                     filteredValue="#{dataTableConvidarBean.alunosFiltrados}">
+            <f:facet name="header">
+                Busca de Alunos:
+                <p:inputText style="margin-right:10px" value="#{dataTableConvidarBean.nome}" placeholder="Buscar"/>
+                <p:commandButton value="Buscar" icon="ui-icon-extlink" action="#{dataTableConvidarBean.buscarAlunos()}" update="dataTable"/>
+            </f:facet>
+
+            <p:column
+                headerText="Nome"
+                sortBy="#{aluno.nome}"
+                filterBy="#{aluno.nome}">
+                #{aluno.nome}
+            </p:column>
+            <p:column
+                headerText="E-mail"
+                sortBy="#{aluno.email}">
+                #{aluno.email}
+            </p:column>
+
+
+            <f:facet name="footer">
+                <p:commandButton value="Convidar" icon="ui-icon-check" action="#{dataTableConvidarBean.enviarConvites()}" onclick="PF('convidarAluno').close()"/>
+            </f:facet>
+        </p:dataTable>
+    </h:form>
+</ui:composition>

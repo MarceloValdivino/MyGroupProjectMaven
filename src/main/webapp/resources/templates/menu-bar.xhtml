@@ -1,0 +1,169 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form>
+    <p:toolbar style="margin-bottom: 10px;">
+        <f:facet name="left">
+            <p:commandButton value="Home" icon="ui-icon-home" action="/home.xhtml?faces-redirect=true"/>
+            <span class="ui-separator">
+                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+            </span>
+            <p:menuButton value="Salas">
+                <p:menuitem value="Nova Sala" onclick="PF('novaSala').show();" />
+                <p:menuitem value="Minhas Salas" action="/minha-sala.xhtml?faces-redirect=true" />
+                <p:menuitem value="Salas Participando"/>
+            </p:menuButton>
+            <p:menuButton value="Mensagens">
+                <p:menuitem value="Nova Mensagem" icon="ui-icon-mail-closed" onclick="PF('envMsg').show();"/>
+                <p:separator/>
+                <p:menuitem value="Mensagens Enviadas" icon="ui-icon-arrowreturnthick-1-n" onclick="PF('dlMsgEnviadas').show()"/>
+                <p:menuitem style="width: 300px;" value="Mensagens Recebidas" icon="ui-icon-arrowreturnthick-1-s" onclick="PF('dlMsgRecebidas').show()"/>
+            </p:menuButton>
+        </f:facet>
+        <f:facet name="right">
+            <p:menuButton value="#{usuarioBean.usuario.nome}">
+                <p:menuitem value="Perfil" icon="ui-icon-wrench" action="/meu-perfil.xhtml?faces-redirect=true"/>
+                <p:separator/>
+                <p:menuitem value="Sair" icon="ui-icon-close" action="#{usuarioBean.registraSaida()}"/>
+            </p:menuButton>
+        </f:facet>
+    </p:toolbar>
+    </h:form>
+
+    <h:form>
+    <p:dialog id="novaSala" widgetVar="novaSala" header="Nova Sala" modal="true" resizable="false" draggable="false">
+        <h:panelGrid columns="2" cellspacing="5">
+            <p:outputLabel id="titulo" value="Título:"/>
+            <p:inputText value="#{salaBean.sala.titulo}" style="width: 215px;"/>
+
+            <p:outputLabel id="descricao" value="Descrição:"/>
+            <p:inputTextarea value="#{salaBean.sala.descricao}" rows="6" cols="28"/>
+        </h:panelGrid>
+        <div align="center">
+            <p:commandButton styleClass="ui-priority-primary" value="Cadastrar" action="#{salaBean.salvar()}" onclick="PF('novaSala').hide()" update="@all"/>
+        </div>
+    </p:dialog>
+    </h:form>
+    <h:form>
+    <p:dialog width="800" id="dlMsgRecebidas" widgetVar="dlMsgRecebidas" header="Mensagens Recebidas" modal="true" resizable="false" draggable="false">
+        <p:dataScroller value="#{mensagensBean.mensagensRecebidas}" var="msgRecebida" mode="inline" scrollHeight="500" rendered="#{not empty mensagensBean.mensagensRecebidas}">
+            <p:panel header="Remetente: #{msgRecebida.remetente.nome}">
+                <h:panelGrid columns="1">
+                    <p:outputLabel value="Enviado em: #{msgRecebida.diaDoEnvio.toString()}"/>
+                    <p:outputLabel value="Mensagem: #{msgRecebida.mensagem}"/>
+                    <p:panel rendered="#{msgRecebida.convite}" header="Convite">
+                        <div align="center">
+                            <p:outputLabel value="Deseja aceitar o convite e entrar na sala?"/>
+                            <h:panelGrid columns="2" rendered="#{msgRecebida.convite}">
+                                <p:commandButton value="Aceitar e entrar" action="#{mensagensBean.aceitarConvite()}">
+                                    <f:setPropertyActionListener value="#{msgRecebida}" target="#{mensagensBean.mensagem}"/>
+                                </p:commandButton>
+                                <p:commandButton value="Recusar"/>
+                            </h:panelGrid>
+                        </div>
+                    </p:panel>
+                </h:panelGrid>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton value="Responder" onclick="PF('responderMsg').show();">
+                            <f:setPropertyActionListener value="#{msgRecebida}" target="#{enviarMensagemBean.mensagem}"/>
+                        </p:commandButton>
+                        <p:commandButton value="Apagar" onclick="PF('msgRemovida').show();">
+                            <f:setPropertyActionListener value="#{msgRecebida}" target="#{mensagensBean.mensagem}"/>
+                        </p:commandButton>
+                    </f:facet>
+                </p:toolbar>
+            </p:panel>
+            <br></br>
+            <p:separator/>
+            <br></br>
+        </p:dataScroller>
+        <div align="center">
+            <p:commandButton value="OK" onclick="PF('dlMsgRecebidas').hide()"/>
+        </div>
+    </p:dialog>
+</h:form>
+    <h:form> 
+    <p:dialog width="800" id="dlMsgEnviadas" widgetVar="dlMsgEnviadas" header="Mensagens Enviadas" modal="true" resizable="false" draggable="false">
+        <p:dataScroller value="#{mensagensBean.mensagensEnviadas}" var="msgEnviada" mode="inline" scrollHeight="500" rendered="#{not empty mensagensBean.mensagensEnviadas}">
+            <p:panel header="Destinatário: #{msgEnviada.destinatario.nome}">
+                <h:panelGrid columns="1">
+                    <p:outputLabel value="Enviado em: #{msgEnviada.diaDoEnvio.toString()}"/>
+                    <p:outputLabel value="Mensagem: #{msgEnviada.mensagem}"/>
+                </h:panelGrid>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton value="Encaminhar">
+                        </p:commandButton>
+                        <p:commandButton value="Apagar" onclick="PF('removerMsgEnviadas').show();">
+                            <f:setPropertyActionListener value="#{msgEnviada}" target="#{mensagensBean.mensagem}"/>
+                        </p:commandButton>
+                    </f:facet>
+                </p:toolbar>
+            </p:panel>
+            <br></br>
+            <p:separator/>
+            <br></br>
+        </p:dataScroller>
+        <div align="center">
+            <p:commandButton value="OK" onclick="PF('dlMsgEnviadas').hide()"/>
+        </div>
+    </p:dialog>
+</h:form>
+    <h:form>
+    <p:dialog id="msgRemovida" widgetVar="msgRemovida" header="Remoção de Mensagem" modal="true" resizable="false" draggable="false">
+        <div align="center">
+            <p:outputLabel value="Deseja mesmo remover essa mensagem?"/><br></br>
+            <p:commandButton styleClass="ui-priority-primary" value="Sim" action="#{mensagensBean.apagarMensagem()}" onclick="PF('dlMsgRecebidas').close();"/>
+            <p:commandButton value="Não" onclick="PF('msgRemovida').hide()"/>
+        </div>
+    </p:dialog>
+    </h:form>
+    <h:form>
+        <p:dialog id="removerMsgEnviadas" widgetVar="removerMsgEnviadas" header="Remoção de Mensagem" modal="true" resizable="false" draggable="false">
+        <div align="center">
+            <p:outputLabel value="Deseja mesmo remover essa mensagem?"/><br></br>
+            <p:commandButton styleClass="ui-priority-primary" value="Sim" action="#{mensagensBean.apagarMensagem()}" onclick="PF('dlMsgEnviadas').close();"/>
+            <p:commandButton value="Não" onclick="PF('msgRemovida').hide()"/>
+        </div>
+    </p:dialog>
+    </h:form>
+    <h:form>   
+    <p:dialog id="envMsg" widgetVar="envMsg" header="Enviar Mensagem" modal="true" resizable="false" draggable="false">
+        <p:panel>
+            <h:panelGrid columns="1">
+                <p:outputLabel value="Busque pelo login:"/>
+                <p:autoComplete value="#{enviarMensagemBean.logins}" completeMethod="#{enviarMensagemBean.listarUsuarios}" multiple="true"/>
+
+                <p:outputLabel value="Mensagem: "/>
+                <p:inputTextarea value="#{enviarMensagemBean.msg}" cols="34" rows="6"/>
+            </h:panelGrid>
+            <div align="center">
+                <p:commandButton value="Enviar" icon="ui-icon-arrowthickstop-1-n" action="#{enviarMensagemBean.enviarMensagens()}" onclick="PF('envMsg').close()"/>
+            </div>
+        </p:panel>
+    </p:dialog>
+    </h:form>
+    <h:form>
+    <p:dialog id="ok" widgetVar="ok" header="Sucesso" modal="true" resizable="false" draggable="false">
+        <div align="center">
+            <p:outputLabel value="Mensagens enviadas com sucesso."/>
+            <p:commandButton value="OK" action="/home.xhtml?faces-redirect=true"/>
+        </div>
+    </p:dialog>
+        </h:form>
+    <h:form>
+    <p:dialog id="responderMsg" widgetVar="responderMsg" header="Responder" modal="true" resizable="false" draggable="false">
+        <p:panel>
+            <p:outputLabel value="Mensagens de resposta:"/><br></br>
+            <p:inputTextarea value="#{enviarMensagemBean.msg}"/>
+            <div align="center">
+                <p:commandButton value="Enviar" action="#{enviarMensagemBean.responderMensagem()}"/>
+            </div>
+        </p:panel>
+    </p:dialog>
+    </h:form>
+</ui:composition>
